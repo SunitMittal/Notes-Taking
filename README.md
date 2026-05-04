@@ -1,5 +1,7 @@
 # Notes Taking App
 
+## Visit to explore: https://notes-taking-three.vercel.app/
+
 A full-stack Notes Taking App built with a React frontend and a Node.js/Express backend. Users can create, edit, and manage notes with authentication and tagging features.
 
 ## Features
