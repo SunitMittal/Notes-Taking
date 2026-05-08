@@ -15,12 +15,11 @@ app.use("/", routes);
 
 const jwt = require("jsonwebtoken");
 
-
 app.get("/", (req, res) => {
   res.json({ data: "hello" });
 });
 
-const port = process.env.PORT;
+const port = process.env.PORT || 7000;
 app.listen(port, () => console.log(`Server is running on Port ${port}`));
 
 module.exports = app;

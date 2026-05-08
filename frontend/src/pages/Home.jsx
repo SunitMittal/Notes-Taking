@@ -25,9 +25,7 @@ const Home = () => {
   });
 
   const [allNotes, setAllNotes] = useState([]);
-
   const [userInfo, setUserInfo] = useState(null);
-
   const [isSearch, setIsSearch] = useState(false);
 
   const navigate = useNavigate();
@@ -37,18 +35,11 @@ const Home = () => {
   };
 
   const showToastMessage = (message, type) => {
-    setShowToastMsg({
-      isShown: true,
-      message,
-      type,
-    });
+    setShowToastMsg({ isShown: true, message, type });
   };
 
   const handleCloseToast = () => {
-    setShowToastMsg({
-      isShown: false,
-      message: "",
-    });
+    setShowToastMsg({ isShown: false, message: "" });
   };
 
   const getUserInfo = async () => {
@@ -66,10 +57,9 @@ const Home = () => {
   const getAllNotes = async () => {
     try {
       const response = await axiosInstance.get("/view");
-      if (response.data && response.data.notes)
-        setAllNotes(response.data.notes);
+      if (response.data && response.data.notes) setAllNotes(response.data.notes);
     } catch (err) {
-      console.log("An unexpected error occured. Please try again.", err);
+      console.log("An unexpected error occurred. Please try again.", err);
     }
   };
 
@@ -77,23 +67,18 @@ const Home = () => {
     const noteId = data._id;
     try {
       const response = await axiosInstance.delete("/delete/" + noteId);
-
       if (response.data && !response.data.error) {
         showToastMessage("Note Deleted Successfully", "delete");
         getAllNotes();
       }
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.message)
-        console.log("An unexpected error occured. Please try again.", err);
+      console.log("An unexpected error occurred. Please try again.", err);
     }
   };
 
   const onSearchNote = async (query) => {
     try {
-      const response = await axiosInstance.get("/search", {
-        params: { query },
-      });
-
+      const response = await axiosInstance.get("/search", { params: { query } });
       if (response.data && response.data.notes) {
         setIsSearch(true);
         setAllNotes(response.data.notes);
@@ -103,23 +88,22 @@ const Home = () => {
     }
   };
 
-  const updateIsPinned = async (noteData)=>{
-        const noteId = noteData._id
+  const updateIsPinned = async (noteData) => {
+    const noteId = noteData._id;
     try {
-      const response = await axiosInstance.put("/update-pinned/"+noteId, {
-        isPinned: !noteData.isPinned
+      const response = await axiosInstance.put("/update-pinned/" + noteId, {
+        isPinned: !noteData.isPinned,
       });
-
       if (response.data && response.data.note) {
-        showToastMessage('Note Updated Successfully')
+        showToastMessage("Note Updated Successfully");
         getAllNotes();
       }
     } catch (err) {
       console.log(err);
     }
-  }
+  };
 
-  const handleClearSearch = async (query) => {
+  const handleClearSearch = () => {
     setIsSearch(false);
     getAllNotes();
   };
@@ -137,9 +121,10 @@ const Home = () => {
         onSearchNote={onSearchNote}
         handleClearSearch={handleClearSearch}
       />
-      <div className="container mx-auto">
+
+      <div className="container mx-auto px-6 pb-24">
         {allNotes.length > 0 ? (
-          <div className="grid grid-cols-3 gap-4 mt-8">
+          <div className="grid grid-cols-3 gap-5 mt-8">
             {allNotes.map((item, index) => (
               <NoteCard
                 key={item._id}
@@ -148,6 +133,7 @@ const Home = () => {
                 content={item.content}
                 tags={item.tags}
                 isPinned={item.isPinned}
+                colorIndex={index}
                 onEdit={() => handleEdit(item)}
                 onDelete={() => deleteNotes(item)}
                 onPinNote={() => updateIsPinned(item)}
@@ -156,19 +142,21 @@ const Home = () => {
           </div>
         ) : (
           <EmptyCard
-            imgSrc={isSearch? NoDataImg: AddNotesImg}
-            message={isSearch?`Oops No note found matching your search.`:`Start creating your first note! Click the 'Add' Button to jot down your thoughts, ideas, and reminders. Let's get started!`}
+            imgSrc={isSearch ? NoDataImg : AddNotesImg}
+            message={
+              isSearch
+                ? "Oops! No note found matching your search."
+                : "Start creating your first note! Click the '+' button to jot down your thoughts, ideas, and reminders."
+            }
           />
         )}
       </div>
 
       <button
-        className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute right-10 bottom-10"
-        onClick={() => {
-          setOpenAddEditModal({ isShown: true, type: "add", data: null });
-        }}
+        className="w-14 h-14 flex items-center justify-center rounded-2xl bg-primary hover:bg-violet-700 fixed right-8 bottom-8 shadow-xl shadow-violet-300 transition-all duration-200 hover:scale-110"
+        onClick={() => setOpenAddEditModal({ isShown: true, type: "add", data: null })}
       >
-        <MdAdd className="text-[32px] text-white" />
+        <MdAdd className="text-3xl text-white" />
       </button>
 
       <Modal
@@ -176,18 +164,17 @@ const Home = () => {
         onRequestClose={() => {}}
         style={{
           overlay: {
-            backgroundColor: "rgba(0,0,0,0.2)",
+            backgroundColor: "rgba(109, 40, 217, 0.08)",
+            backdropFilter: "blur(4px)",
           },
         }}
         contentLabel=""
-        className="w-[40%] max-h-3/4 bg-white rounded-md mx-auto mt-14 p-5 overflow-scroll"
+        className="w-[480px] max-h-[88vh] bg-white rounded-3xl mx-auto mt-12 p-7 overflow-y-auto shadow-2xl shadow-violet-100 border border-violet-100 outline-none"
       >
         <AddEditNotes
           type={openAddEditModal.type}
           noteData={openAddEditModal.data}
-          onClose={() => {
-            setOpenAddEditModal({ isShown: false, type: "add", data: null });
-          }}
+          onClose={() => setOpenAddEditModal({ isShown: false, type: "add", data: null })}
           getAllNotes={getAllNotes}
           showToastMessage={showToastMessage}
         />

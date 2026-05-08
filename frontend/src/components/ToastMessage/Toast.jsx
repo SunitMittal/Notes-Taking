@@ -7,36 +7,40 @@ const Toast = ({ isShown, message, type, onClose }) => {
     const timeoutId = setTimeout(() => {
       onClose();
     }, 2500);
-    return () => {
-      clearTimeout(timeoutId);
-    };
+    return () => clearTimeout(timeoutId);
   }, [onClose]);
 
   return (
     <div
-      className={`absolute top-20 right-6 transition-all duration-400 ${
-        isShown ? "opacity-100" : "opacity-0"
+      className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${
+        isShown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
       }`}
     >
       <div
-        className={`min-w-52 bg-white border shadow-2xl rounded-md after:w-[5px] after:h-full ${
-          type === "delete" ? "after:bg-red-500" : "after:bg-green-500"
-        } after:absolute after:left-0 after:top-0 after:rounded-l-lg`}
+        className={`flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border ${
+          type === "delete"
+            ? "bg-red-50 border-red-200 shadow-red-100"
+            : "bg-emerald-50 border-emerald-200 shadow-emerald-100"
+        }`}
       >
-        <div className="flex items-center gap-3 py-2 px-4">
-          <div
-            className={`w-10 h-10 flex items-center justify-center rounded-full ${
-              type === "delete" ? "bg-red-50" : "bg-green-50"
-            }`}
-          >
-            {type === "delete" ? (
-              <MdDeleteOutline className="text-xl text-red-500" />
-            ) : (
-              <LuCheck className="text-xl text-green-500" />
-            )}
-          </div>
-          <p className="text-sm text-slate-800">{message}</p>
+        <div
+          className={`w-8 h-8 flex items-center justify-center rounded-xl flex-shrink-0 ${
+            type === "delete" ? "bg-red-100" : "bg-emerald-100"
+          }`}
+        >
+          {type === "delete" ? (
+            <MdDeleteOutline className="text-red-500 text-lg" />
+          ) : (
+            <LuCheck className="text-emerald-500 text-lg" />
+          )}
         </div>
+        <p
+          className={`text-sm font-medium ${
+            type === "delete" ? "text-red-700" : "text-emerald-700"
+          }`}
+        >
+          {message}
+        </p>
       </div>
     </div>
   );
